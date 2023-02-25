@@ -1,4 +1,4 @@
-'''mermaid
+```mermaid
 sequenceDiagram
     participant browser
     participant server
@@ -14,4 +14,4 @@ sequenceDiagram
     browser->>+server: GET https://studies.cs.helsinki.fi/exampleapp/data.json
     server-->>-browser: data.json with JSON object
     Note right of browser: The browser executes the callback function that renders the notes
-'''
+```
