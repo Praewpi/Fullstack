@@ -1,0 +1,7 @@
+-Document Object Model, or DOM,
+is an Application Programming Interface (API) that enables programmatic modification of the element trees corresponding to web pages.
+-The topmost node of the DOM tree of an HTML document is called the document object. 
+-HTML elements can also have other attributes apart from classes. The div element containing the notes has an id attribute.
+-JavaScript code uses the id to find the element.
+-AJAX (Asynchronous JavaScript and XML) enabled the fetching of content to web pages using JavaScript included within the HTML, without the need to rerender the page.
+
