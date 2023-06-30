@@ -30,17 +30,12 @@ const PersonsDisplay = ({ persons, setPersons }) => {
       }
     };
 
-
-
-    
-    
-
   return (
     <div>
       {persons.map(person => (
         <div key={person.id}>
           {person.name}  {person.number}
-          <button onClick={() => handleDelete(person.id)}>Delete</button>
+          <button onClick={() => handleDelete(person.id)}>delete</button>
         </div>
       ))}
     </div>
@@ -124,9 +119,6 @@ const App = () => {
   const filteredPersons = persons.filter(person =>
     person.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-
-
 
   return (
     <div>
