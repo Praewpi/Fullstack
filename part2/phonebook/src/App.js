@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/personService';
 
 
 const Filter = ({ searchTerm, handleSearch }) => {
@@ -10,12 +10,37 @@ const Filter = ({ searchTerm, handleSearch }) => {
   );
 };
 
-const PersonsDisplay = ({ persons }) => {
+const PersonsDisplay = ({ persons, setPersons }) => {
+    // handle delete person 
+    const handleDelete = personId => {
+      const person = persons.find(person => person.id === personId);
+      if (person) {
+        const confirmDeletion = window.confirm(`Delete ${person.name} ?`);
+        if (confirmDeletion) {
+          personService
+            .remove(person.id)
+            .then(() => {
+              setPersons(persons.filter(p => p.id !== person.id));
+            })
+            .catch(error => {
+              console.log('error', error);
+              alert('Failed to delete the person from the server.');
+            });
+        }
+      }
+    };
+
+
+
+    
+    
+
   return (
     <div>
       {persons.map(person => (
         <div key={person.id}>
-          {person.name} - {person.number}
+          {person.name}  {person.number}
+          <button onClick={() => handleDelete(person.id)}>Delete</button>
         </div>
       ))}
     </div>
@@ -39,7 +64,7 @@ const PersonForm = ({ newName, newPhone, handleNameChange, handlePhoneChange, ha
 };
 
 const App = () => {
-  const [ persons, setPersons ] = useState([])
+  const [persons, setPersons ] = useState([])
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
   const [searchTerm, setSearchTerm] = useState('');
@@ -47,11 +72,11 @@ const App = () => {
 // check axios progression of the execution.
   useEffect(() => {
     console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
+    personService
+      .getAll()
       .then(response => {
         console.log('promise fulfilled')
-        setPersons(response.data)
+        setPersons(response)
       })
   }, [])
 
@@ -70,6 +95,7 @@ const App = () => {
     setSearchTerm(event.target.value);
   };
 
+  // handle submit form 
   const handleSubmit = (event) => {
     event.preventDefault()
 
@@ -79,16 +105,28 @@ const App = () => {
       alert(`${newName} is already added to the phonebook`)
     } else {
       const newPerson = { name: newName, number: newPhone }
-      setPersons(persons.concat(newPerson))
-      setNewName('')
-      setNewPhone('');
+ 
+      // add person to server
+      personService
+      .create(newPerson)
+      .then(response => {
+        console.log(response)
+        setPersons(persons.concat(newPerson))
+        setNewName('')
+        setNewPhone('')
+      })
+      .catch(console.log("contact could not be added"))
     }
+
   }
 
   // for filter with case sensitive
   const filteredPersons = persons.filter(person =>
     person.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+
+
 
   return (
     <div>
@@ -105,7 +143,7 @@ const App = () => {
       />
      
       <h2>Numbers</h2>
-      <PersonsDisplay persons={filteredPersons} />
+      <PersonsDisplay persons={filteredPersons} setPersons={setPersons} />
     </div>
   )
 }
