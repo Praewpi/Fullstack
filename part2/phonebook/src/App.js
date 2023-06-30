@@ -15,16 +15,16 @@ const PersonsDisplay = ({ persons, setPersons }) => {
     const handleDelete = personId => {
       const person = persons.find(person => person.id === personId);
       if (person) {
-        const confirmDeletion = window.confirm(`Delete ${person.name} ?`);
+        const confirmDeletion = window.confirm(`Delete ${person.name} ?`)
         if (confirmDeletion) {
           personService
             .remove(person.id)
             .then(() => {
-              setPersons(persons.filter(p => p.id !== person.id));
+              setPersons(persons.filter(p => p.id !== person.id))
             })
             .catch(error => {
               console.log('error', error);
-              alert('Failed to delete the person from the server.');
+              alert('Failed to delete the person from the server.')
             });
         }
       }
@@ -75,7 +75,6 @@ const App = () => {
       })
   }, [])
 
-
   // for handle new added name
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -83,21 +82,45 @@ const App = () => {
  // for handle new added phone number with name
   const handlePhoneChange = (event) => {
     setNewPhone(event.target.value);
-  };
+  }
   
   // handle search 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
-  };
+  }
 
   // handle submit form 
   const handleSubmit = (event) => {
     event.preventDefault()
 
-    const nameExists = persons.some(person => person.name === newName)
+    // check if added person already exist
 
-    if (nameExists) {
-      alert(`${newName} is already added to the phonebook`)
+    const existingPerson = persons.find((person) => person.name.toLowerCase() === newName.toLocaleLowerCase());
+
+    if (existingPerson) {
+      const confirmUpdate = window.confirm(
+        `${existingPerson.name} is already added to the phonebook. Replace the old number with a new one?`
+      );
+      if (confirmUpdate) {
+      const updatedPerson = { ...existingPerson, number: newPhone };
+
+      personService
+        .update(existingPerson.id, updatedPerson)
+        .then((response) => {
+          setPersons(
+            persons.map((person) =>
+              person.id === existingPerson.id ? response : person)
+        
+          )
+          setNewName('')
+          setNewPhone('')
+        })
+        .catch((error) => {
+          console.log("error", error);
+          alert("Failed to update the person's number.");
+        });
+    }
+
     } else {
       const newPerson = { name: newName, number: newPhone }
  
@@ -118,7 +141,7 @@ const App = () => {
   // for filter with case sensitive
   const filteredPersons = persons.filter(person =>
     person.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  )
 
   return (
     <div>
