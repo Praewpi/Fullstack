@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-const api_key = process.env.REACT_APP_API_KEY
+// to run on terminal REACT_APP_API_KEY={key} npm start
 
 const Country = ({ country }) => {
   //api key
-
+  const api_key = process.env.REACT_APP_API_KEY
   const [ weatherData, setWeatherData ] = useState({})
+  const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${country.capitalInfo[0]}&lon=${country.capitalInfo[1]}&units=metric&appid=${api_key}`
   //const { name, area, capital, capitalInfo, languages, flag } = country;
   useEffect(() => {
     axios
-      .get(`https://api.openweathermap.org/data/2.5/weather?lat=${country.capitalInfo[0]}&lon=${country.capitalInfo[1]}&units=metric&appid=${api_key}`)
+      .get(weatherUrl)
       .then(response => {
         console.log('axios get weather response:', response)
         setWeatherData(response.data)
@@ -65,13 +66,13 @@ const Countries = ({ countries, setSearch }) => {
 const App = () => {
   const [countries, setCountries] = useState([])
   const [search, setSearch] = useState('')
-  const [countryFilter, setCountryFilter] = useState('');
+  const countriesBaseUrl = 'https://restcountries.com/v3.1/all'
 
 
   // check axios progression of the execution.
   useEffect(() => {
     console.log('effect')
-    axios.get('https://restcountries.com/v3.1/all')
+    axios.get(countriesBaseUrl)
     .then(response => {
       console.log('promise fulfilled, get response:',response)
       setCountries(response.data.map(country => (
