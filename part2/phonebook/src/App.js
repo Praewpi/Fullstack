@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import personService from './services/personService';
 
-
+// for search block display
 const Filter = ({ searchTerm, handleSearch }) => {
   return (
     <div>
@@ -10,26 +10,8 @@ const Filter = ({ searchTerm, handleSearch }) => {
   );
 };
 
-const PersonsDisplay = ({ persons, setPersons }) => {
-    // handle delete person 
-    const handleDelete = personId => {
-      const person = persons.find(person => person.id === personId);
-      if (person) {
-        const confirmDeletion = window.confirm(`Delete ${person.name} ?`)
-        if (confirmDeletion) {
-          personService
-            .remove(person.id)
-            .then(() => {
-              setPersons(persons.filter(p => p.id !== person.id))
-            })
-            .catch(error => {
-              console.log('error', error);
-              alert('Failed to delete the person from the server.')
-            });
-        }
-      }
-    };
-
+// for display all people with delete button
+const PersonsDisplay = ({ persons , handleDelete}) => {
   return (
     <div>
       {persons.map(person => (
@@ -41,7 +23,7 @@ const PersonsDisplay = ({ persons, setPersons }) => {
     </div>
   );
 };
-
+// for display submit section
 const PersonForm = ({ newName, newPhone, handleNameChange, handlePhoneChange, handleSubmit }) => {
   return (
     <form onSubmit={handleSubmit}>
@@ -57,12 +39,37 @@ const PersonForm = ({ newName, newPhone, handleNameChange, handlePhoneChange, ha
     </form>
   );
 };
+// for sucess and error notification display
+const Notification = ({ message, type }) => {
+  if (message === null) {
+    return null
+  }
+  if (type === 'success') {
+    return (
+      <div className='success'>
+        {message}
+      </div>
+    )
+  } else if (type === 'error') {
+    return (
+      <div className='error'>
+        {message}
+      </div>
+    )
+  }
 
+  return null
+}
+
+
+// application main part
 const App = () => {
   const [persons, setPersons ] = useState([])
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
   const [searchTerm, setSearchTerm] = useState('');
+  const [notification, setNotification] = useState('')
+  const [notificationType, setNotificationType] = useState('')
 
 // check axios progression of the execution.
   useEffect(() => {
@@ -79,6 +86,7 @@ const App = () => {
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
+
  // for handle new added phone number with name
   const handlePhoneChange = (event) => {
     setNewPhone(event.target.value);
@@ -94,36 +102,44 @@ const App = () => {
     event.preventDefault()
 
     // check if added person already exist
-
-    const existingPerson = persons.find((person) => person.name.toLowerCase() === newName.toLocaleLowerCase());
-
-    if (existingPerson) {
+    if (persons.map(person => person.name).includes(newName)) { 
       const confirmUpdate = window.confirm(
-        `${existingPerson.name} is already added to the phonebook. Replace the old number with a new one?`
-      );
+        `${newName} is already added to the phonebook. Replace the old number with a new one?`
+      )
       if (confirmUpdate) {
-      const updatedPerson = { ...existingPerson, number: newPhone };
+      const person = persons.find((person) => person.name === newName);
+      const updatedPerson = { ...person, number: newPhone };
+      const id = person.id
 
       personService
-        .update(existingPerson.id, updatedPerson)
+        .update(id, updatedPerson)
         .then((response) => {
           setPersons(
             persons.map((person) =>
-              person.id === existingPerson.id ? response : person)
-        
+                person.id !== id ? person : response)
           )
-          setNewName('')
-          setNewPhone('')
+          setNotification(`Updated ${person.name}`)
+          setNotificationType('success')
+          setTimeout(() => {
+            setNotification(null)
+          }, 5000)
         })
         .catch((error) => {
-          console.log("error", error);
-          alert("Failed to update the person's number.");
-        });
+          console.log("error", error)
+          setPersons(persons.filter(person => person.id !== id))
+          setNotification(`Information of '${person.name}' has already been removed from server`)
+          setNotificationType('error')
+          setTimeout(() => {
+            setNotification(null)
+          }, 5000)
+        })
+        setNewName('')
+        setNewPhone('')
+        return
     }
 
     } else {
-      const newPerson = { name: newName, number: newPhone }
- 
+      const newPerson = { name: newName, number: newPhone, id: persons.length + 1 }
       // add person to server
       personService
       .create(newPerson)
@@ -132,10 +148,21 @@ const App = () => {
         setPersons(persons.concat(newPerson))
         setNewName('')
         setNewPhone('')
+        setNotification(`Added ${newName}`)
+        setNotificationType('success')
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000)
       })
-      .catch(console.log("contact could not be added"))
+      .catch(error => {
+        console.log("contact could not be added")
+        setNotification(error.response.data.error)
+        setNotificationType('error')
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000)
+      })
     }
-
   }
 
   // for filter with case sensitive
@@ -143,9 +170,30 @@ const App = () => {
     person.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
+ // handle delete person 
+ const handleDelete = personId => {
+    const person = persons.find(person => person.id === personId);
+    if (person) {
+      const confirmDeletion = window.confirm(`Delete ${person.name} ?`)
+      if (confirmDeletion) {
+        personService
+          .remove(person.id)
+          .then(() => {
+            setPersons(persons.filter(p => p.id !== person.id))
+          })
+          .catch(error => {
+            console.log('error', error);
+            alert('Failed to delete the person from the server.')
+          });
+      }
+    }
+  }
+
+
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notification} type={notificationType} />
       <Filter searchTerm={searchTerm} handleSearch={handleSearch} />
 
       <h2>add a new</h2>
@@ -158,7 +206,7 @@ const App = () => {
       />
      
       <h2>Numbers</h2>
-      <PersonsDisplay persons={filteredPersons} setPersons={setPersons} />
+      <PersonsDisplay persons={filteredPersons} handleDelete={handleDelete} />
     </div>
   )
 }
