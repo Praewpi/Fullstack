@@ -25,6 +25,9 @@ const Country = ({ country }) => {
       <ul>
         {Object.values(country.languages).map(language => <li key={language}>{language}</li>)}
       </ul>
+      <img src={country.flags} style={{width: 175}}/>
+
+
       <h2>Weather in {country.capital}</h2>
       <span>Temperature: {(function() {
         if (Object.keys(weatherData).length !== 0) 
@@ -40,11 +43,11 @@ const Country = ({ country }) => {
   )
 }
 
-const Countries = ({ countries, setCountryFilter }) => {
+const Countries = ({ countries, setSearch }) => {
   const showCountry = name => {
     return function(e) {
       e.preventDefault()
-      setCountryFilter(name)
+      setSearch(name)
     }
   }
 
@@ -91,8 +94,8 @@ const App = () => {
 
   const handleSearch = (event) => {
     const searchValue = event.target.value;
-    setSearch(searchValue);
-    setCountryFilter(searchValue);
+    setSearch(searchValue)
+   // setCountryFilter(searchValue)
   }
 
 
@@ -103,7 +106,7 @@ const App = () => {
     if (countriesToShow.length > 10) {
       return <p>Too many matches, specify another filter</p>;
     } else if (countriesToShow.length > 1) {
-      return <Countries countries={countriesToShow} setCountryFilter={setCountryFilter} />;
+      return <Countries countries={countriesToShow} setSearch={setSearch} />;
     } else if (countriesToShow.length === 1) {
       return <Country country={countriesToShow[0]} />;
     } else {
