@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import personService from './services/personService';
+import personService from './services/personService'
 
 // for search block display
 const Filter = ({ searchTerm, handleSearch }) => {
@@ -7,8 +7,8 @@ const Filter = ({ searchTerm, handleSearch }) => {
     <div>
       filter shown with: <input value={searchTerm} onChange={handleSearch} />
     </div>
-  );
-};
+  )
+}
 
 // for display all people with delete button
 const PersonsDisplay = ({ persons , handleDelete}) => {
@@ -21,8 +21,8 @@ const PersonsDisplay = ({ persons , handleDelete}) => {
         </div>
       ))}
     </div>
-  );
-};
+  )
+}
 // for display submit section
 const PersonForm = ({ newName, newPhone, handleNameChange, handlePhoneChange, handleSubmit }) => {
   return (
@@ -37,8 +37,8 @@ const PersonForm = ({ newName, newPhone, handleNameChange, handlePhoneChange, ha
         <button type="submit">add</button>
       </div>
     </form>
-  );
-};
+  )
+}
 // for sucess and error notification display
 const Notification = ({ message, type }) => {
   if (message === null) {
@@ -67,7 +67,7 @@ const App = () => {
   const [persons, setPersons ] = useState([])
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState('')
   const [notification, setNotification] = useState('')
   const [notificationType, setNotificationType] = useState('')
 
@@ -89,12 +89,12 @@ const App = () => {
 
  // for handle new added phone number with name
   const handlePhoneChange = (event) => {
-    setNewPhone(event.target.value);
+    setNewPhone(event.target.value)
   }
   
   // handle search 
   const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
+    setSearchTerm(event.target.value)
   }
 
   // handle submit form 
@@ -107,8 +107,8 @@ const App = () => {
         `${newName} is already added to the phonebook. Replace the old number with a new one?`
       )
       if (confirmUpdate) {
-      const person = persons.find((person) => person.name === newName);
-      const updatedPerson = { ...person, number: newPhone };
+      const person = persons.find((person) => person.name === newName)
+      const updatedPerson = { ...person, number: newPhone }
       const id = person.id
 
       personService
@@ -172,7 +172,7 @@ const App = () => {
 
  // handle delete person 
  const handleDelete = personId => {
-    const person = persons.find(person => person.id === personId);
+    const person = persons.find(person => person.id === personId)
     if (person) {
       const confirmDeletion = window.confirm(`Delete ${person.name} ?`)
       if (confirmDeletion) {
@@ -182,9 +182,9 @@ const App = () => {
             setPersons(persons.filter(p => p.id !== person.id))
           })
           .catch(error => {
-            console.log('error', error);
+            console.log('error', error)
             alert('Failed to delete the person from the server.')
-          });
+          })
       }
     }
   }
