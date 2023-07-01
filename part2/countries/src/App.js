@@ -6,7 +6,8 @@ const Country = ({ country }) => {
   //api key
   const api_key = process.env.REACT_APP_API_KEY
   const [ weatherData, setWeatherData ] = useState({})
-  const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${country.capitalInfo[0]}&lon=${country.capitalInfo[1]}&units=metric&appid=${api_key}`
+  //https://api.openweathermap.org/data/2.5/weather?
+  const weatherUrl = `http://pro.openweathermap.org/data/2.5/weather?lat=${country.capitalInfo[0]}&lon=${country.capitalInfo[1]}&units=metric&appid=${api_key}`
   //const { name, area, capital, capitalInfo, languages, flag } = country;
   useEffect(() => {
     axios
@@ -26,15 +27,19 @@ const Country = ({ country }) => {
       <ul>
         {Object.values(country.languages).map(language => <li key={language}>{language}</li>)}
       </ul>
-      <img src={country.flags} style={{width: 175}}/>
+      <img src={country.flags.png} style={{ width: '175px' }} alt="flag"/>
 
 
       <h2>Weather in {country.capital}</h2>
       <span>Temperature: {(function() {
         if (Object.keys(weatherData).length !== 0) 
           return weatherData.main.temp
+          
         })()
-      } Celcius</span><br/>
+        
+      } 
+      Celcius</span><br/>
+      <img src={`http://openweathermap.org/img/wn/${weatherData.icon}@2x.png`}></img><br/>
       <span>Wind: {(function() {
         if (Object.keys(weatherData).length !== 0) 
           return weatherData.wind.speed
@@ -82,7 +87,8 @@ const App = () => {
           capital: country.capital,
           capitalInfo: country.capitalInfo.latlng,
           languages: country.languages,
-          flag: country.flag
+          flag: country.flag,
+          flags: country.flags
         }
       )
     ))
