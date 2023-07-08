@@ -155,8 +155,9 @@ const App = () => {
         }, 5000)
       })
       .catch(error => {
-        console.log("contact could not be added")
-        setNotification(error.response.data.error)
+        console.log("contact could not be added!")
+        console.log(error.response.data.error)
+        setNotification(`contact could not be added: ${error.response.data.error}'`)
         setNotificationType('error')
         setTimeout(() => {
           setNotification(null)
