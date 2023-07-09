@@ -1,42 +1,48 @@
-const express = require('express')
-const app = express()
-const cors = require('cors')
-const mongoose = require('mongoose')
+const app = require('./app')
+const http = require('http')
+const config = require('./utils/config')
+const logger = require('./utils/logger')
 
-const blogSchema = new mongoose.Schema({
-  title: String,
-  author: String,
-  url: String,
-  likes: Number
-})
+const server = http.createServer(app)
 
-const Blog = mongoose.model('Blog', blogSchema)
+// const blogSchema = new mongoose.Schema({
+//   title: String,
+//   author: String,
+//   url: String,
+//   likes: Number
+// })
 
-const mongoUrl = 'mongodb://localhost/bloglist'
-mongoose.connect(mongoUrl)
+// const Blog = mongoose.model('Blog', blogSchema)
 
-app.use(cors())
-app.use(express.json())
+// const mongoUrl = 'mongodb://localhost/bloglist'
+// mongoose.connect(mongoUrl)
 
-app.get('/api/blogs', (request, response) => {
-  Blog
-    .find({})
-    .then(blogs => {
-      response.json(blogs)
-    })
-})
+// app.use(cors())
+// app.use(express.json())
 
-app.post('/api/blogs', (request, response) => {
-  const blog = new Blog(request.body)
+// app.get('/api/blogs', (request, response) => {
+//   Blog
+//     .find({})
+//     .then(blogs => {
+//       response.json(blogs)
+//     })
+// })
 
-  blog
-    .save()
-    .then(result => {
-      response.status(201).json(result)
-    })
-})
+// app.post('/api/blogs', (request, response) => {
+//   const blog = new Blog(request.body)
 
-const PORT = 3003
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
+//   blog
+//     .save()
+//     .then(result => {
+//       response.status(201).json(result)
+//     })
+// })
+
+// const PORT = 3003
+// app.listen(PORT, () => {
+//   console.log(`Server running on port ${PORT}`)
+// })
+
+server.listen(config.PORT, () => {
+  logger.info(`Server running on port ${config.PORT}`)
 })
