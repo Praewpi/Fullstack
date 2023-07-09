@@ -1,13 +1,14 @@
 const express = require('express')
+require('express-async-errors') //need to put before import the router
 const cors = require('cors')
 const mongoose = require('mongoose')
-
 const blogRouter = require('./controllers/blog')
 const middleware = require('./utils/middleware')
 const config = require('./utils/config')
 const logger = require('./utils/logger')
 
 const app = express()
+
 
 logger.info('connecting to', config.MONGODB_URI)
 
