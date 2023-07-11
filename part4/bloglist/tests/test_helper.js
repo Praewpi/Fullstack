@@ -42,19 +42,19 @@ const initialBlogs = [
 
 
 const initialUsers = [
-    {
-      username: 'root',
-      name: 'Superuser',
-      password: 'salainen'
-    },
-  ]
+  {
+    username: 'root',
+    name: 'Superuser',
+    password: 'salainen'
+  },
+]
 
 const usersInDb = async () => {
   const users = await User.find({})
   return users.map(user => user.toJSON())
 }
-  
-  
+
+
 const nonExistingId = async () => {
   const blog = new Blog({
     title: 'willremovethissoon',

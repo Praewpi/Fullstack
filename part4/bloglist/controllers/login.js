@@ -12,7 +12,7 @@ loginRouter.post('/', async (request, response) => {
     : await bcrypt.compare(password, user.passwordHash)
     //bcrypt.compare method is used to check if the password is correct
 
-  //If the user is not found, or the password is incorrect 
+  //If the user is not found, or the password is incorrect
   if (!(user && passwordCorrect)) {
     return response.status(401).json({
       error: 'invalid username or password'
@@ -29,10 +29,10 @@ loginRouter.post('/', async (request, response) => {
 
   // token expires in one hour
   const token = jwt.sign(
-      userForToken,
-      process.env.SECRET,
-      { expiresIn: 60*60 }
-    )
+    userForToken,
+    process.env.SECRET,
+    { expiresIn: 60*60 }
+  )
 
   response
     .status(200)
