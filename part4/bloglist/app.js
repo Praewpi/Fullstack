@@ -2,8 +2,9 @@ const express = require('express')
 require('express-async-errors') //need to put before import the router
 const cors = require('cors')
 const mongoose = require('mongoose')
-const blogRouter = require('./controllers/blog')
+
 const usersRouter = require('./controllers/users')
+const blogRouter = require('./controllers/blog')
 const loginRouter = require('./controllers/login')
 const middleware = require('./utils/middleware')
 const config = require('./utils/config')
