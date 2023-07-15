@@ -1,21 +1,19 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import LoginForm from './components/LoginForm'
+import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
   const [message, setMessage] = useState(null)
   const [messageType, setMessageType] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [loginVisible, setLoginVisible] = useState(false)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -72,82 +70,44 @@ const App = () => {
     setUser(null)
   }
   // add block
-  const addBlog = (event) => {
-    event.preventDefault()
-
-    const blogObject = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl
-    }
+  const createBlog = (blogObject) => {
 
     blogService
       .create(blogObject)
       .then(retunedBlog => {
-        setMessage(`A new blog ${newTitle} by ${newAuthor}`)
-        setMessageType('success')
-
-        setBlogs(blogs.concat(retunedBlog))
-        setNewTitle('')
-        setNewAuthor('')
-        setNewUrl('')
-        
-        setTimeout(() => {
-          setMessage(null)
-        }, 5000)
+      setBlogs(blogs.concat(retunedBlog))
       })
   }
 
   const loginForm = () => {
-    //the value of the display property is none if we do not want the component to be displayed
-    const hideWhenVisible = { display: loginVisible ? 'none' : '' }
-    const showWhenVisible = { display: loginVisible ? '' : 'none' }
-
     return (
-      <div>
-        <div style={hideWhenVisible}>
-          <button onClick={() => setLoginVisible(true)}>log in</button>
-        </div>
-        <div style={showWhenVisible}>
-          <LoginForm
-            username={username}
-            password={password}
-            handleUsernameChange={({ target }) => setUsername(target.value)}
-            handlePasswordChange={({ target }) => setPassword(target.value)}
-            handleSubmit={handleLogin}
-          />
-          <button onClick={() => setLoginVisible(false)}>cancel</button>
-        </div>
-      </div>
+        <Togglable buttonLabel="Login">
+        <LoginForm
+          username={username}
+          password={password}
+          handleUsernameChange={({ target }) => setUsername(target.value)}
+          handlePasswordChange={({ target }) => setPassword(target.value)}
+          handleSubmit={handleLogin}
+        />
+      </Togglable>
     )
   }
-  const blogForm = () => (
-    <form onSubmit={addBlog}>
-      <div>
-        Title:
-        <input
-          value={newTitle}
-          onChange={({ target }) => setNewTitle(target.value)}
-        />
-      </div>
-      <div>
-        Author:
-        <input
-          value={newAuthor}
-          onChange={({ target }) => setNewAuthor(target.value)}
-        />
-      </div>
-      <div>
-        URL:
-        <input
-          value={newUrl}
-          onChange={({ target }) => setNewUrl(target.value)}
-        />
-      </div>
 
-      <button type="submit">create</button>
-    </form>
-  )
+//acts as a reference to the component
+//ensures the same reference (ref) that is kept throughout re-renders of the component
+const blogFormRef = useRef()
+
+const blogForm = () => {
+    return (
+        <Togglable buttonLabel="New Blog" ref={blogFormRef}>
+        <BlogForm 
+          createBlog={createBlog}
+          setMessage={setMessage}
+          setMessageType={setMessageType}
+        />
+        </Togglable>
+    )
+}
 
   return (
     <div>
@@ -160,10 +120,11 @@ const App = () => {
         <div>
           <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
           {blogForm()}
-          <br></br>
+          <ul>
           {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
-      )}
+         <li key={blog.id}><Blog key={blog.id} blog={blog} /></li>
+        )}
+        </ul>
         </div>
       }
     </div>
