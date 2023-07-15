@@ -1,8 +1,14 @@
 import { useState, forwardRef, useImperativeHandle } from 'react'
+import PropTypes from 'prop-types'
 
 //component is wrapped inside of a forwardRef
 //so the component can access the ref that is assigned to it.
 const Togglable = forwardRef((props, refs) => {
+  // buttonLabel is defined as manditory
+  Togglable.propTypes = {
+    buttonLabel: PropTypes.string.isRequired
+  }
+
   const [visible, setVisible] = useState(false)
    
   //the value of the display property is none if we do not want the component to be displayed
@@ -31,5 +37,7 @@ const Togglable = forwardRef((props, refs) => {
     </div>
   )
 })
+
+Togglable.displayName = 'Togglable'
 
 export default Togglable
