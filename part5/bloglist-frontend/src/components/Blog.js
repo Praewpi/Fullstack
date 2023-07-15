@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 const Blog = ({ blog, updateBlog, removeBlog }) => {
   const [detailVisible, setDetailVisible] = useState(false)
-  
+
   //add details about the blog are shown or not
   const hideWhenVisible = { display: detailVisible ? 'none' : '' }
   const showWhenVisible = { display: detailVisible ? '' : 'none' }
@@ -18,7 +18,7 @@ const Blog = ({ blog, updateBlog, removeBlog }) => {
     borderWidth: 1,
     marginBottom: 5
   }
-  // for like button 
+  // for like button
   const updateLikes = () => {
     const blogObject = {
       title: blog.title,

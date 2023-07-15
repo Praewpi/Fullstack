@@ -33,7 +33,7 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
-   
+
   // Make a login request with the provided username and password
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -83,19 +83,19 @@ const App = () => {
         }))
       })
   }
-//update
-const updateBlog = (id, blogObject) => {
-  blogService
-    .update(id, blogObject)
-    .then(updatedBlog => {
-    const updatedBlogs = blogs.filter(blog => blog.id !== id).concat(updatedBlog)
-    setBlogs([...updatedBlogs].sort((a, b) => {
-        return b.likes - a.likes
-    }))
-    })
-}
-// remove
-const removeBlog = (id) => {
+  //update
+  const updateBlog = (id, blogObject) => {
+    blogService
+      .update(id, blogObject)
+      .then(updatedBlog => {
+        const updatedBlogs = blogs.filter(blog => blog.id !== id).concat(updatedBlog)
+        setBlogs([...updatedBlogs].sort((a, b) => {
+          return b.likes - a.likes
+        }))
+      })
+  }
+  // remove
+  const removeBlog = (id) => {
     blogService
       .remove(id)
       .then(() => {
@@ -103,11 +103,11 @@ const removeBlog = (id) => {
         setBlogs([...updatedBlogs].sort((a, b) => {
           return b.likes - a.likes
         }))
-    })
-}
+      })
+  }
   const loginForm = () => {
     return (
-        <Togglable buttonLabel="Login">
+      <Togglable buttonLabel="Login">
         <LoginForm
           username={username}
           password={password}
@@ -119,21 +119,21 @@ const removeBlog = (id) => {
     )
   }
 
-//acts as a reference to the component
-//ensures the same reference (ref) that is kept throughout re-renders of the component
-const blogFormRef = useRef()
+  //acts as a reference to the component
+  //ensures the same reference (ref) that is kept throughout re-renders of the component
+  const blogFormRef = useRef()
 
-const blogForm = () => {
+  const blogForm = () => {
     return (
-        <Togglable buttonLabel="New Blog" ref={blogFormRef}>
-        <BlogForm 
+      <Togglable buttonLabel="New Blog" ref={blogFormRef}>
+        <BlogForm
           createBlog={createBlog}
           setMessage={setMessage}
           setMessageType={setMessageType}
         />
-        </Togglable>
+      </Togglable>
     )
-}
+  }
 
   return (
     <div>
@@ -147,16 +147,16 @@ const blogForm = () => {
           <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
           {blogForm()}
           <ul>
-          {blogs.map(blog =>
-            <li key={blog.id}>
-            <Blog
-                key={blog.id}
-                blog={blog}
-                updateBlog={updateBlog}
-                removeBlog={removeBlog}
-            />
-            </li>
-           )}
+            {blogs.map(blog =>
+              <li key={blog.id}>
+                <Blog
+                  key={blog.id}
+                  blog={blog}
+                  updateBlog={updateBlog}
+                  removeBlog={removeBlog}
+                />
+              </li>
+            )}
           </ul>
         </div>
       }

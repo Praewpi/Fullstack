@@ -10,7 +10,7 @@ const Togglable = forwardRef((props, refs) => {
   }
 
   const [visible, setVisible] = useState(false)
-   
+
   //the value of the display property is none if we do not want the component to be displayed
   const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
@@ -38,6 +38,7 @@ const Togglable = forwardRef((props, refs) => {
   )
 })
 
+//add copmponent display name - solve component definition is missing display name:
 Togglable.displayName = 'Togglable'
 
 export default Togglable
