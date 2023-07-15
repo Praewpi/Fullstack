@@ -17,7 +17,9 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs(blogs)
+      setBlogs([...blogs].sort((a, b) => {
+        return b.likes - a.likes
+      }))
     )
   }, [])
 
@@ -71,14 +73,38 @@ const App = () => {
   }
   // add block
   const createBlog = (blogObject) => {
-
+    blogFormRef.current.toggleVisibility()
     blogService
       .create(blogObject)
       .then(retunedBlog => {
-      setBlogs(blogs.concat(retunedBlog))
+        const updatedBlogs = blogs.concat(retunedBlog)
+        setBlogs([...updatedBlogs].sort((a, b) => {
+          return b.likes - a.likes
+        }))
       })
   }
-
+//update
+const updateBlog = (id, blogObject) => {
+  blogService
+    .update(id, blogObject)
+    .then(updatedBlog => {
+    const updatedBlogs = blogs.filter(blog => blog.id !== id).concat(updatedBlog)
+    setBlogs([...updatedBlogs].sort((a, b) => {
+        return b.likes - a.likes
+    }))
+    })
+}
+// remove
+const removeBlog = (id) => {
+    blogService
+      .remove(id)
+      .then(() => {
+        const updatedBlogs = blogs.filter(blog => blog.id !== id)
+        setBlogs([...updatedBlogs].sort((a, b) => {
+          return b.likes - a.likes
+        }))
+    })
+}
   const loginForm = () => {
     return (
         <Togglable buttonLabel="Login">
@@ -122,9 +148,16 @@ const blogForm = () => {
           {blogForm()}
           <ul>
           {blogs.map(blog =>
-         <li key={blog.id}><Blog key={blog.id} blog={blog} /></li>
-        )}
-        </ul>
+            <li key={blog.id}>
+            <Blog
+                key={blog.id}
+                blog={blog}
+                updateBlog={updateBlog}
+                removeBlog={removeBlog}
+            />
+            </li>
+           )}
+          </ul>
         </div>
       }
     </div>
