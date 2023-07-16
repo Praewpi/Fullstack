@@ -5,7 +5,7 @@ import BlogForm from './BlogForm'
 import userEvent from '@testing-library/user-event'
 
 //5.16
-//The test should check,that the form calls the event handler it received as props with the right details 
+//The test should check,that the form calls the event handler it received as props with the right details
 //when a new blog is created
 test('<BlogForm /> updates parent state and calls createBlog', async () => {
   const createBlog = jest.fn()

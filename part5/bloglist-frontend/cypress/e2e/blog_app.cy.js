@@ -1,14 +1,14 @@
 //Cypress runs the tests in order
 describe('Blog app', function() {
   beforeEach(function () {
-  cy.request('POST', 'http://localhost:3003/api/testing/reset')
-  const user = {
-    name: 'Matti Luukkainen',
-    username: 'mluukkai',
-    password: 'salainen'
-  }
-  cy.request('POST', 'http://localhost:3003/api/users/', user)
-  cy.visit('')
+    cy.request('POST', 'http://localhost:3003/api/testing/reset')
+    const user = {
+      name: 'Matti Luukkainen',
+      username: 'mluukkai',
+      password: 'salainen'
+    }
+    cy.request('POST', 'http://localhost:3003/api/users/', user)
+    cy.visit('')
   })
 
   it('front page can be opened', function() {
@@ -21,12 +21,12 @@ describe('Blog app', function() {
     cy.get('#password').should('not.be.visible')
 
     cy.contains('Login').click()
-     // after click those fields are visible
+    // after click those fields are visible
     cy.get('#username').should('be.visible')
     cy.get('#password').should('be.visible')
   })
-  
-   describe('Login',function() {
+
+  describe('Login',function() {
     it('succeeds with correct credentials', function() {
       cy.contains('Login').click()
       cy.get('#username').type('mluukkai')
@@ -71,45 +71,44 @@ describe('Blog app', function() {
     })
 
 
-  describe('a blog exist', function() {
-    beforeEach(function () {
-      cy.createBlog({
-        title: 'test title',
-        author: 'test author',
-        url: 'test url'
+    describe('a blog exist', function() {
+      beforeEach(function () {
+        cy.createBlog({
+          title: 'test title',
+          author: 'test author',
+          url: 'test url'
+        })
+      })
+      // 5.20 test: like
+      it('users can like a blog', function() {
+        cy.contains('View').click()
+        cy.contains('Like').click()
+        cy.get('li')
+          .should('contain', 'Likes: 1')
+      })
+      // 5.21
+      it('user who created a blog can delete it.', function() {
+        cy.contains('View').click()
+        cy.contains('Remove').click()
+        cy.should('not.contain', 'test title by test author')
+      })
+
+      // 5.22
+      it('other users cannot delete the blog', function() {
+        const user = {
+          name: 'other user',
+          username: 'otheruser',
+          password: 'otherpw'
+        }
+        cy.request('POST', 'http://localhost:3003/api/users/', user)
+        cy.login({ username: 'otheruser', password: 'otherpw' })
+        cy.contains('View').click()
+        cy.contains('Remove').click()
+        cy.get('li')
+          .should('contain', 'test title by test author')
       })
     })
-    // 5.20 test: like
-    it('users can like a blog', function() {
-      cy.contains('View').click()
-      cy.contains('Like').click()
-      cy.get('li')
-        .should('contain', 'Likes: 1')
-    })
-    // 5.21
-    it('user who created a blog can delete it.', function() {
-      cy.contains('View').click()
-      cy.contains('Remove').click()
-      cy.should('not.contain', 'test title by test author')
-    })
 
-    // 5.22
-    it('other users cannot delete the blog', function() {
-    const user = {
-      name: 'other user',
-      username: 'otheruser',
-      password: 'otherpw'
-    }
-    cy.request('POST', 'http://localhost:3003/api/users/', user)
-    cy.login({ username: 'otheruser', password: 'otherpw' })
-    cy.contains('View').click()
-    cy.contains('Remove').click()
-    cy.get('li')
-      .should('contain', 'test title by test author')
-    })
-
-  })
-  
     describe('multiple blogs exist', function() {
       beforeEach(function () {
         cy.createBlog({
