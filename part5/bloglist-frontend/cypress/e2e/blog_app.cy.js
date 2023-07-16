@@ -25,6 +25,7 @@ describe('Blog app', function() {
     cy.get('#username').should('be.visible')
     cy.get('#password').should('be.visible')
   })
+  
    describe('Login',function() {
     it('succeeds with correct credentials', function() {
       cy.contains('Login').click()
@@ -43,6 +44,7 @@ describe('Blog app', function() {
 
       cy.get('.error')
         .should('contain', 'Wrong username or password')
+        //Check that the notification shown with unsuccessful login is displayed red.
         .and('have.css', 'color', 'rgb(255, 0, 0)')
         .and('have.css', 'border-style', 'solid')
 
@@ -50,5 +52,25 @@ describe('Blog app', function() {
 
     })
   })
+
+  describe('When logged in', function () {
+    beforeEach(function () {
+      cy.login({ username: 'mluukkai', password: 'salainen' })
+    })
+
+    it('a new blog can be created', function () {
+      cy.contains('New Blog').click()
+
+      cy.get('#title').type('test title')
+      cy.get('#author').type('test author')
+      cy.get('#url').type('test url')
+
+      cy.contains('Create').click()
+      cy.contains('A new blog test title by test author')
+      cy.get('li').contains('test title by test author')
+    })
+  })
+
+
 
  })
