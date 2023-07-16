@@ -71,7 +71,7 @@ describe('Blog app', function() {
     })
 
 
-  describe('and blog exist', function() {
+  describe('and a blog exist', function() {
     beforeEach(function () {
       cy.createBlog({
         title: 'test title',
@@ -86,6 +86,28 @@ describe('Blog app', function() {
       cy.get('li')
         .should('contain', 'Likes: 1')
     })
+    // 5.21
+    it('user who created a blog can delete it.', function() {
+      cy.contains('View').click()
+      cy.contains('Remove').click()
+      cy.should('not.contain', 'test title by test author')
+    })
+
+    // 5.22
+    it('other users cannot delete the blog', function() {
+    const user = {
+      name: 'other user',
+      username: 'otheruser',
+      password: 'otherpw'
+    }
+    cy.request('POST', 'http://localhost:3003/api/users/', user)
+    cy.login({ username: 'otheruser', password: 'otherpw' })
+    cy.contains('View').click()
+    cy.contains('Remove').click()
+    cy.get('li')
+      .should('contain', 'test title by test author')
+    })
+
   })
 })
 
