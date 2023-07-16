@@ -51,9 +51,7 @@ test('url and number of likes are shown when the button is clicked', async ()  =
 
 })
 
-
-
-// exercise 5.15
+//5.15
 test('if the like button is clicked twice, calls event handler twice', async () => {
     const blog = {
       title: 'test blog',
