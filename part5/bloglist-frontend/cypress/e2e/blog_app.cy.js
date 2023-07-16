@@ -69,8 +69,25 @@ describe('Blog app', function() {
       cy.contains('A new blog test title by test author')
       cy.get('li').contains('test title by test author')
     })
+
+
+  describe('and blog exist', function() {
+    beforeEach(function () {
+      cy.createBlog({
+        title: 'test title',
+        author: 'test author',
+        url: 'test url'
+      })
+    })
+    // 5.20 test: like
+    it('users can like a blog', function() {
+      cy.contains('View').click()
+      cy.contains('Like').click()
+      cy.get('li')
+        .should('contain', 'Likes: 1')
+    })
   })
+})
 
 
-
- })
+})
