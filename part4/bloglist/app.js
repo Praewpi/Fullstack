@@ -36,6 +36,13 @@ app.use('/api/users', usersRouter)
 app.use('/api/blogs', middleware.userExtractor, blogRouter)
 app.use('/api/login', loginRouter)
 
+// for cypress test
+if (process.env.NODE_ENV === 'test') {
+  const testingRouter = require('./controllers/testing')
+  app.use('/api/testing', testingRouter)
+}
+
+
 //those have to called the lastest
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
