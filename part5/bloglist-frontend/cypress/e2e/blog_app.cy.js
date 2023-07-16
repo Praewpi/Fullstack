@@ -71,7 +71,7 @@ describe('Blog app', function() {
     })
 
 
-  describe('and a blog exist', function() {
+  describe('a blog exist', function() {
     beforeEach(function () {
       cy.createBlog({
         title: 'test title',
@@ -109,7 +109,33 @@ describe('Blog app', function() {
     })
 
   })
-})
+  
+    describe('multiple blogs exist', function() {
+      beforeEach(function () {
+        cy.createBlog({
+          title: 'first blog',
+          author: 'author 1',
+          url: 'test url',
+          likes: 4
+        })
+        cy.createBlog({
+          title: 'second blog',
+          author: 'author 2',
+          url: 'test url',
+          likes: 10
+        })
+        cy.createBlog({
+          title: 'third blog',
+          author: 'author 3',
+          url: 'test url',
+          likes: 8
+        })
+      })
 
-
+      it('the blogs are ordered according to likes', function() {
+        cy.get('.blog').eq(0).should('contain', 'second blog')
+        cy.get('.blog').eq(2).should('contain', 'first blog')
+      })
+    })
+  })
 })
