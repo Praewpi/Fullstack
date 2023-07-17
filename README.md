@@ -1,1 +1,1 @@
-# Full stack web development course exercise
+# Full stack web development course exercises
